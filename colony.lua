@@ -5,7 +5,7 @@ function createColony( params )
 -- self
 -- types: generator, defensive
 -- owner: own, neutral, enemy1, enemy2...
--- with no params created 1-level neutral generator with no defense or generation with 5-50 army.
+-- with no params created 1-level neutral generator with no defense and generation = 1.5 with 5-50 army.
     local colony = {}
 
 -- flags
@@ -39,7 +39,7 @@ function createColony( params )
     if( not colony.level ) then colony.level = 1 end
     if( not colony.type ) then colony.type = "generator" end
     if( not colony.owner) then colony.owner = "neutral" end
-    if( not colony.generation) then colony.generation = 0 end
+    if( not colony.generation) then colony.generation = 1.5 end --per second
     if( not colony.defense) then colony.defense = 0 end
     
 -- graphics
@@ -57,6 +57,18 @@ function createColony( params )
 -- text
     colony.text = display.newText(colony.bacteries.count, colony.coordinates.x, colony.coordinates.y)
     colony.text:setTextColor(0, 0, 0)
+    
+    local newGeneration = 0
+    local updateGeneration = function( event )
+        newGeneration = newGeneration + colony.generation
+        if(newGeneration % 1 == 0) then
+            colony.bacteries.count = colony.bacteries.count + newGeneration
+            colony:updateText()
+            newGeneration = 0
+        end
+    end
+    
+    timer.performWithDelay(1000, updateGeneration, 0 )
     
 -- public functions
     function colony:setTapListener(func)
