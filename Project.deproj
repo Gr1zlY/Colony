@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+  <file>
+    <filename>bacteria.lua</filename>
+  </file>
+  <file>
+    <filename>colony.lua</filename>
+  </file>
+  <file>
+    <filename>config.lua</filename>
+  </file>
+  <file>
+    <filename>main.lua</filename>
+  </file>
+</project>
