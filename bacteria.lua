@@ -21,8 +21,8 @@ function createBacteries( count )
         for i = #bacteria.attackBacteries + 1, #bacteria.attackBacteries + groups do
             bacteria.attackBacteries[i] = {}
             bacteria.attackBacteries[i].image = display.newImageRect("images/bacteria.png", 20, 20)
-            bacteria.attackBacteries[i].image.x = sourceColony.coordinates.x
-            bacteria.attackBacteries[i].image.y = sourceColony.coordinates.y
+            bacteria.attackBacteries[i].image.x = sourceColony.coordinates.x + math.random(-30, 30)
+            bacteria.attackBacteries[i].image.y = sourceColony.coordinates.y + math.random(-30, 30)
             --bacteria.attackBacteries[i].source = sourceColony
             --bacteria.attackBacteries[i].destination = destColony
             
@@ -48,6 +48,8 @@ function createBacteries( count )
                     end
                 end
                 destColony:updateText()
+                -- clean memory
+                bacteria.attackBacteries[i] = nil
             end
                 
             transition.to(bacteria.attackBacteries[i].image, {delay = math.random(1000), time = distance/bacteria.speed * 100, x = destColony.coordinates.x, y = destColony.coordinates.y, onComplete = transListener })
