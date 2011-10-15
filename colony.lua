@@ -6,6 +6,7 @@ function createColony( params )
 -- types: generator, defensive
 -- owner: own, neutral, enemy1, enemy2...
 -- with no params created 1-level neutral generator with no defense and generation = 1.5 with 5-50 army.
+-- generation values allowed (0.25, 0.50, 0.75, 1 ..etc)
     local colony = {}
 
 -- flags
@@ -18,12 +19,17 @@ function createColony( params )
         if( params.type ) then colony.type = params.type end
         if( params.size ) then colony.size = params.size end
         if( params.owner ) then colony.owner = params.owner end
-        if( params.tapListener) then colony.tapListener = params.tapListener end
+        if( params.list ) then colony.list = params.list end
         
     -- special
         if( params.generation ) then colony.generation = params.generation end
         if( params.defense ) then colony.defense = params.defense end
         if( params.bacteries ) then colony.bacteries = params.bacteries end
+    end
+    
+    if( not colony.list ) then
+        print("Error creating colony. Colonys list required")
+        return nil
     end
     
 -- random fields as we don't fill them
@@ -53,6 +59,7 @@ function createColony( params )
     
     colony.image.x = colony.coordinates.x
     colony.image.y = colony.coordinates.y
+    colony.image.colony = colony
     
 -- text
     colony.text = display.newText(colony.bacteries.count, colony.coordinates.x, colony.coordinates.y)
@@ -70,11 +77,13 @@ function createColony( params )
     
     timer.performWithDelay(1000, updateGeneration, 0 )
     
--- public functions
-    function colony:setTapListener(func)
-        colony.image:addEventListener("tap", func)
+    local tapListener = function( event )
+-- selection is here
     end
     
+    colony.image:addEventListener("tap", tapListener)
+    
+-- public functions
     function colony:updateText()
         colony.text.text = colony.bacteries.count
     end

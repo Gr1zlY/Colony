@@ -52,7 +52,8 @@ function createBacteries( count )
                 bacteria.attackBacteries[i] = nil
             end
                 
-            transition.to(bacteria.attackBacteries[i].image, {delay = math.random(1000), time = distance/bacteria.speed * 100, x = destColony.coordinates.x, y = destColony.coordinates.y, onComplete = transListener })
+            transition.to(bacteria.attackBacteries[i].image, {delay = math.random(1000), time = distance/bacteria.speed * 100,
+            x = destColony.coordinates.x, y = destColony.coordinates.y, onComplete = transListener })
         end
     end
     

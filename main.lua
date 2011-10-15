@@ -1,10 +1,11 @@
 require ('bacteria')
 require ('colony')
 
-local enemyColony = colony.createColony({owner = "enemy1"})
-local myColonys = {}
+local colonys = {}
+colonys[#colonys + 1] = colony.createColony({list = colonys, owner = "enemy1"})
 
 for i = 1, 10 do
-    myColonys[i] = colony.createColony({owner = "own"})
-    myColonys[i].bacteries:sendArmy(50, myColonys[i], enemyColony)
+    colonys[#colonys + 1] = colony.createColony({list = colonys, owner = "own"})
 end
+
+
