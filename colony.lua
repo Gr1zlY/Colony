@@ -141,6 +141,8 @@ function createColony( params )
                     end
                 else
                     --посаем войска в подмогу
+                     current_touch.selected = true
+                     
                      for i=1,#temp_array do
                         if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
                         
