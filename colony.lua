@@ -20,11 +20,13 @@ function createColony( params )
         if( params.size ) then colony.size = params.size end
         if( params.owner ) then colony.owner = params.owner end
         if( params.list ) then colony.list = params.list end
+        if( params.parent ) then colony.parent = params.parent end -- ссылка на массив всех колоний (необходима для выделения колоний)
         
     -- special
         if( params.generation ) then colony.generation = params.generation end
         if( params.defense ) then colony.defense = params.defense end
         if( params.bacteries ) then colony.bacteries = params.bacteries end
+        
     end
     
     if( not colony.list ) then
@@ -59,7 +61,7 @@ function createColony( params )
     
     colony.image.x = colony.coordinates.x
     colony.image.y = colony.coordinates.y
-    colony.image.colony = colony
+    colony.image.colony = colony --Ссылка на саму колонию
     
 -- text
     colony.text = display.newText(colony.bacteries.count, colony.coordinates.x, colony.coordinates.y)
@@ -67,21 +69,81 @@ function createColony( params )
     
     local newGeneration = 0
     local updateGeneration = function( event )
-        newGeneration = newGeneration + colony.generation
-        if(newGeneration % 1 == 0) then
-            colony.bacteries.count = colony.bacteries.count + newGeneration
-            colony:updateText()
-            newGeneration = 0
+        --Нейтральные колонии не могут генерировать войска
+        if colony.owner ~= "neutral" then
+            newGeneration = newGeneration + colony.generation
+            if(newGeneration % 1 == 0) then
+                colony.bacteries.count = colony.bacteries.count + newGeneration
+                colony:updateText()
+                newGeneration = 0
+            end
         end
     end
     
     timer.performWithDelay(1000, updateGeneration, 0 )
     
     local tapListener = function( event )
--- selection is here
+    
+        local temp_colony = event.target.colony --Получаем ссылку на колонию с которой будем работать
+        local temp_array = temp_colony.parent -- Ссылка на массив всех колоний
+        
+        if event.phase == "began" then
+            if temp_colony.owner == "own" then
+                temp_colony.selected = true --Если колония наша - выделяем ее
+            else
+            
+                --рисуем путь от всех выделеных колоний к колонии противника
+                for i=1,#temp_array do
+                    if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
+                        line = display.newLine( temp_array[i].coordinates.x, temp_array[i].coordinates.y, temp_colony.coordinates.x, temp_colony.coordinates.y)
+                    end
+                end
+                
+            end
+        elseif event.phase == "moved" then
+            --рисуем путь от всех выделеных колоний в данную
+            for i=1,#temp_array do
+                if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
+                    line = display.newLine( temp_array[i].coordinates.x, temp_array[i].coordinates.y, temp_colony.coordinates.x, temp_colony.coordinates.y)
+                end
+            end
+        elseif event.phase == "ended" then
+            --[[
+                Если колония наша, то проверяем, есть ли еще наши выделенные колонии, если есть,
+                то посылаем войска на подмогу в эту полонию. Если выделеных колоний нету, то выделяем 
+                данную колонию.
+                Если это колония противника - посылаем из всех выделеных своих колоний войска в данную.
+            ]]--
+            local num_selected = 0; -- количество выделеных планет
+            for i=1,#temp_array do
+                if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
+                    num_selected = num_selected + 1;
+                end
+            end
+            
+            if num_selected == 0 then
+                temp_colony.selected = true
+            else
+                
+                for i=1,#temp_array do
+                    if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
+                        bacteries = bacteria.createBacteries( 1 )
+                        bacteries:sendArmy(50, temp_array[i], temp_colony)
+                    end
+                end
+                --Снимаем выделение со всех колоний
+                for i=1,#temp_array do
+                    temp_array[i].selected = false
+                end
+            end
+            
+        else -- event.phase == "cancelled" система прервала обработку нажатия.
+            --Add smth
+        end
+      
     end
     
-    colony.image:addEventListener("tap", tapListener)
+    colony.image:addEventListener("touch", tapListener)
     
 -- public functions
     function colony:updateText()
