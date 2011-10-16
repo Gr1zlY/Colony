@@ -19,7 +19,6 @@ function createColony( params )
         if( params.type ) then colony.type = params.type end
         if( params.size ) then colony.size = params.size end
         if( params.owner ) then colony.owner = params.owner end
-        if( params.list ) then colony.list = params.list end
         if( params.parent ) then colony.parent = params.parent end -- ссылка на массив всех колоний (необходима для выделения колоний)
         
     -- special
@@ -29,8 +28,8 @@ function createColony( params )
         
     end
     
-    if( not colony.list ) then
-        print("Error creating colony. Colonys list required")
+    if( not colony.parent ) then
+        print("Error creating colony. Colony parent required")
         return nil
     end
     
