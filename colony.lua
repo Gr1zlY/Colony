@@ -145,8 +145,7 @@ function createColony( params )
                      for i=1,#temp_array do
                         if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
                         
-                            army = bacteria.createBacteries( 1 )  --создание бактерий
-                            army:sendArmy(50, temp_array[i], temp_colony)
+                            temp_array[i].bacteries:sendArmy(50, temp_array[i], temp_colony) -- посылаем армию в подмогу
                             
                             temp_array[i].selected = false -- снимаем выделение после отправки войск
                         end
@@ -160,8 +159,7 @@ function createColony( params )
                      for i=1,#temp_array do
                         if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
                         
-                            army = bacteria.createBacteries( 1 ) --создание бактерий
-                            army:sendArmy(50, temp_array[i], temp_colony)
+                            temp_array[i].bacteries:sendArmy(50, temp_array[i], temp_colony) -- посылаем армию в атаку
                             
                             temp_array[i].selected = false -- снимаем выделение после отправки войск
                         end
