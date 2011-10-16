@@ -155,6 +155,9 @@ function createColony( params )
                 end
             else
                 --посылаем войска в аттаку
+                if current_touch ~= nil then
+                    current_touch.selected = true
+                end
                      for i=1,#temp_array do
                         if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
                         
@@ -171,7 +174,6 @@ function createColony( params )
         else -- event.phase == "cancelled" система прервала обработку нажатия.
             --Add smth
         end
-        print(current_touch)
     end
     
     colony.image:addEventListener("touch", touchListener)
