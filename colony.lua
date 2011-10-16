@@ -121,6 +121,8 @@ function createColony( params )
                     if temp_colony.selected == false then
                         temp_colony.selected = true
                     else
+                        --Если есть выделенные планеты, то при втором касании выделение снимается.
+                        --Если нету выделеных, то при втором касании выделяются все планеты.                        
                         local num_selected = 0
                         for i=1,#temp_array do
                             if temp_array[i].selected == true then
