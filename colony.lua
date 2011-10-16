@@ -82,7 +82,7 @@ function createColony( params )
     
     timer.performWithDelay(1000, updateGeneration, 0 )
     
-    local tapListener = function( event )
+    local touchListener = function( event )
     
         local temp_colony = event.target.colony --Получаем ссылку на колонию с которой будем работать
         local temp_array = temp_colony.parent -- Ссылка на массив всех колоний
@@ -90,6 +90,7 @@ function createColony( params )
         if event.phase == "began" then
             if temp_colony.owner == "own" then
                 temp_colony.selected = true --Если колония наша - выделяем ее
+                current_touch = temp_colony
             else
             
                 --рисуем путь от всех выделеных колоний к колонии противника
@@ -114,36 +115,43 @@ function createColony( params )
                 данную колонию.
                 Если это колония противника - посылаем из всех выделеных своих колоний войска в данную.
             ]]--
-            local num_selected = 0; -- количество выделеных планет
-            for i=1,#temp_array do
-                if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
-                    num_selected = num_selected + 1;
+            if temp_colony.owner == "own" then
+                if current_touch == temp_colony then
+                    temp_colony.selected = true
+                else
+                    --посаем войска в подмогу
+                     for i=1,#temp_array do
+                        if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
+                        
+                            army = bacteria.createBacteries( 1 )  --создание бактерий
+                            army:sendArmy(50, temp_array[i], temp_colony)
+                            
+                            temp_array[i].selected = false -- снимаем выделение после отправки войск
+                        end
+                    end                   
                 end
+            else
+                --посылаем войска в аттаку
+                     for i=1,#temp_array do
+                        if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
+                        
+                            army = bacteria.createBacteries( 1 ) --создание бактерий
+                            army:sendArmy(50, temp_array[i], temp_colony)
+                            
+                            temp_array[i].selected = false -- снимаем выделение после отправки войск
+                        end
+                    end
             end
             
-            if num_selected == 0 then
-                temp_colony.selected = true
-            else
-                
-                for i=1,#temp_array do
-                    if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
-                        bacteries = bacteria.createBacteries( 1 )
-                        bacteries:sendArmy(50, temp_array[i], temp_colony)
-                    end
-                end
-                --Снимаем выделение со всех колоний
-                for i=1,#temp_array do
-                    temp_array[i].selected = false
-                end
-            end
+            current_touch = nil -- касание закончилось
             
         else -- event.phase == "cancelled" система прервала обработку нажатия.
             --Add smth
         end
-      
+        print(current_touch)
     end
     
-    colony.image:addEventListener("touch", tapListener)
+    colony.image:addEventListener("touch", touchListener)
     
 -- public functions
     function colony:updateText()
