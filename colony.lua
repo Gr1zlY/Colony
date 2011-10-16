@@ -89,7 +89,7 @@ function createColony( params )
         
         if event.phase == "began" then
             if temp_colony.owner == "own" then
-                temp_colony.selected = true --Если колония наша - выделяем ее
+                --temp_colony.selected = true --Если колония наша - выделяем ее
                 current_touch = temp_colony
             else
             
@@ -117,7 +117,26 @@ function createColony( params )
             ]]--
             if temp_colony.owner == "own" then
                 if current_touch == temp_colony then
-                    temp_colony.selected = true
+                    --Если не выделена - выделяем
+                    if temp_colony.selected == false then
+                        temp_colony.selected = true
+                    else
+                        local num_selected = 0
+                        for i=1,#temp_array do
+                            if temp_array[i].selected == true then
+                                num_selected = num_selected + 1
+                            end
+                        end
+                        if num_selected > 1 then
+                            temp_colony.selected = false
+                        else
+                            for i=1,#temp_array do
+                                if temp_array[i].owner == "own" then
+                                    temp_array[i].selected = true
+                                end
+                            end                            
+                        end
+                    end
                 else
                     --посаем войска в подмогу
                      for i=1,#temp_array do
