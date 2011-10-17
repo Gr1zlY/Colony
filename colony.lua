@@ -175,7 +175,7 @@ function createColony( params )
     
 -- public functions
     function colony:updateText()
-        colony.text.text = colony.bacteries.count
+        colony.text.text = colony.bacteries.count.."#" -- для отладки delete
     end
     
     return colony
