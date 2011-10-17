@@ -179,6 +179,9 @@ function createColony( params )
         if colony.owner == "own" then
             colony.text.text  = colony.text.text  .."#" -- для отладки delete
         end
+        if colony.selected == true then
+            colony.text.text  = colony.text.text  .."S" -- для отладки delete
+        end
     end
     
     return colony
