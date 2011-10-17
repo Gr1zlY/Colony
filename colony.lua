@@ -70,20 +70,21 @@ function createColony( params )
     colony.text = display.newText(colony.bacteries.count, colony.coordinates.x, colony.coordinates.y)
     colony.text:setTextColor(0, 0, 0)
     
-    local newGeneration = 0
+    local fractionPart = 0 --ƒробна€ часть от прироста
+    local lastUpdate = system.getTimer() -- ¬рем€ последнего пересчета количества бактерий
+    
     local updateGeneration = function( event )
-        --Ќейтральные колонии не могут генерировать войска
-        if colony.owner ~= "neutral" then
-            newGeneration = newGeneration + colony.generation
-            if(newGeneration % 1 == 0) then
-                colony.bacteries.count = colony.bacteries.count + newGeneration
-                colony:updateText()
-                newGeneration = 0
-            end
+         if colony.owner ~= "neutral" then --Ќейтральные колонии не могут генерировать войска
+            local gtime = (system.getTimer() - lastUpdate)/1000 -- врем€ прошедшее с последнего апдейта
+            local newGeneration = gtime*colony.generation + fractionPart --количество бактерий сгенерированых за это врем€
+            fractionPart = newGeneration%1 -- дробна€ часть сгенеррированых бактерий
+            colony.bacteries.count = colony.bacteries.count + (newGeneration - fractionPart) -- к общему числу прибавл€ем сгененированные без дробной части
+            colony:updateText() --обновл€ем текст
+            lastUpdate = system.getTimer() --обновл€ем врем€ последнего персчета
         end
     end
-    
-    timer.performWithDelay(1000, updateGeneration, 0 )
+    Runtime:addEventListener("enterFrame", updateGeneration)
+    --timer.performWithDelay(1000, updateGeneration, 0 )
     
     local touchListener = function( event )
     
