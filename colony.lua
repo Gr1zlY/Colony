@@ -175,7 +175,10 @@ function createColony( params )
     
 -- public functions
     function colony:updateText()
-        colony.text.text = colony.bacteries.count.."#" -- для отладки delete
+        colony.text.text = colony.bacteries.count
+        if colony.owner == "own" then
+            colony.text.text  = colony.text.text  .."#" -- для отладки delete
+        end
     end
     
     return colony
