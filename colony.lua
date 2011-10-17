@@ -1,6 +1,10 @@
 module(..., package.seeall)
 require ('bacteria')
 
+local current_touch = nil -- Ссылка на планету, с которой начался слайд.
+local last_click = 0 --Время последнего клика. Необходимо для даблтача.
+local doubletap = 500 --Время между нажатиями.
+
 function createColony( params )
 -- self
 -- types: generator, defensive
@@ -116,30 +120,39 @@ function createColony( params )
             ]]--
             if temp_colony.owner == "own" then
                 if current_touch == temp_colony then
-                    --Если не выделена - выделяем
-                    if temp_colony.selected == false then
-                        temp_colony.selected = true
-                    else
-                        --Если есть выделенные планеты, то при втором касании выделение снимается.
-                        --Если нету выделеных, то при втором касании выделяются все планеты.                        
-                        local num_selected = 0
-                        for i=1,#temp_array do
-                            if temp_array[i].selected == true then
-                                num_selected = num_selected + 1
-                            end
-                        end
-                        if num_selected > 1 then
-                            temp_colony.selected = false
-                        else
+                    if temp_colony.selected == false then --Если не выделена
+                        temp_colony.selected = true --Выделяем
+                        last_click = system.getTimer() -- Записываем время клика
+                    else --Если планета выделена
+                        if (system.getTimer() - last_click) > doubletap then -- если время между тапами больше doubletap
+                            temp_colony.selected = false -- снимаем выделение
+                        else -- если время между тапами меньше doubletap
                             for i=1,#temp_array do
                                 if temp_array[i].owner == "own" then
-                                    temp_array[i].selected = true
+                                    temp_array[i].selected = true --выделяем все свои колонии.
                                 end
-                            end                            
+                            end
+                            --[[
+                            local num_selected = 0
+                            for i=1,#temp_array do
+                                if temp_array[i].selected == true then
+                                    num_selected = num_selected + 1
+                                end
+                            end
+                            if num_selected > 1 then
+                                temp_colony.selected = false
+                            else
+                                for i=1,#temp_array do
+                                    if temp_array[i].owner == "own" then
+                                        temp_array[i].selected = true
+                                    end
+                                end                            
+                            end
+                            ]]--
                         end
                     end
                 else
-                    --посаем войска в подмогу
+                    --посыем войска в подмогу
                     if current_touch ~= nil then
                         current_touch.selected = true
                     end
@@ -151,7 +164,7 @@ function createColony( params )
                         temp_array[i].selected = false -- снимаем выделение после отправки войск
                     end                   
                 end
-            else
+            else --temp_colony.owner == enemy или neutral
                 --посылаем войска в аттаку
                 if current_touch ~= nil then
                     current_touch.selected = true
