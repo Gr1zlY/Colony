@@ -140,13 +140,13 @@ function createColony( params )
                     end
                 else
                     --посаем войска в подмогу
-                     current_touch.selected = true
+                    if current_touch ~= nil then
+                        current_touch.selected = true
+                    end
                      
                      for i=1,#temp_array do
-                        if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
-                        
-                            temp_array[i].bacteries:sendArmy(50, temp_array[i], temp_colony) -- посылаем армию в подмогу
-                            
+                        if temp_array[i] ~= temp_colony and temp_array[i].selected == true then                        
+                            temp_array[i].bacteries:sendArmy(50, temp_array[i], temp_colony) -- посылаем армию в подмогу                            
                             temp_array[i].selected = false -- снимаем выделение после отправки войск
                         end
                     end                   
@@ -157,10 +157,8 @@ function createColony( params )
                     current_touch.selected = true
                 end
                      for i=1,#temp_array do
-                        if temp_array[i] ~= temp_colony and temp_array[i].selected == true then
-                        
-                            temp_array[i].bacteries:sendArmy(50, temp_array[i], temp_colony) -- посылаем армию в атаку
-                            
+                        if temp_array[i] ~= temp_colony and temp_array[i].selected == true then                        
+                            temp_array[i].bacteries:sendArmy(50, temp_array[i], temp_colony) -- посылаем армию в атаку                            
                             temp_array[i].selected = false -- снимаем выделение после отправки войск
                         end
                     end
